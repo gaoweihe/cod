@@ -5,7 +5,7 @@ use rocksdb::{Options, DB};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use tokio::io::AsyncReadExt;
-use google_drive::Client;
+use onedrive_api::{OneDrive, FileName, DriveLocation, ItemLocation}; 
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -33,7 +33,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     log::info!("magic: {:?}", magic_str);
     let _ = DB::destroy(&Options::default(), db_path.clone());
 
-    let google_drive = Client::new(
+    let google_drive = google_drive::Client::new(
         String::from("client-id"),
         String::from("client-secret"),
         String::from("redirect-uri"),
