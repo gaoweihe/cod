@@ -17,6 +17,7 @@ clap = { version = "4.5.7", features = ["derive"] }
 dropbox-sdk = "0.18.1"
 google-drive = "0.7.0"
 log = "0.4.21"
+notify = "6.1.1"
 onedrive-api = "0.10.0"
 rand = "0.8.5"
 reqwest = "0.12.5"
@@ -25,3 +26,7 @@ serde = "1.0.203"
 serde_yml = "0.0.10"
 sha256 = "1.5.0"
 tokio = { version = "1.38.0", features = ["full"] }
+windows = "0.57.0"
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.52.0"

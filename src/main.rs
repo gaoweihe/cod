@@ -4,14 +4,16 @@ use log::{info, warn};
 use rocksdb::{Options, DB};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use tokio::io::AsyncReadExt;
+use notify::{Watcher, RecommendedWatcher, RecursiveMode, Event};
+use std::path::Path; 
+use std::sync::mpsc::channel; 
+use tokio::task; 
 use onedrive_api::{OneDrive, FileName, DriveLocation, ItemLocation}; 
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
-    /// Name of the person to greet
     #[arg(short, long)]
     config_path: String,
 }
@@ -41,5 +43,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         String::from("refresh-token"),
     );
 
+    // Create a channel to receive the events.
+    let (tx, rx) = channel::<Event>();
+
+    let mut watcher = notify::recommended_watcher(|res| {
+        match res {
+           Ok(event) => println!("event: {:?}", event),
+           Err(e) => println!("watch error: {:?}", e),
+        }
+    })?;
+
+    // Add a path to be watched. All files and directories at that path and
+    // below will be monitored for changes.
+    watcher.watch(Path::new("."), RecursiveMode::Recursive)?; 
+
+    add_to_startup(); 
+
     return Ok(());
+}
+
+#[cfg(target_os = "windows")]
+fn add_to_startup() {
+    // Windows-specific code here
+}
+
+#[cfg(target_os = "macos")]
+fn add_to_startup() {
+    // macOS-specific code here
+}
+
+#[cfg(target_os = "linux")]
+fn add_to_startup() {
+    // Linux-specific code here
 }
